@@ -20,3 +20,17 @@
 | `read()` | Reads data from byte stream |
 | `write()` | Write data to byte stream |
 | `close()` | Close the socket connection and free up space for OS |
+
+**TCP Server**
+
+Pseudocode
+
+```
+fd = socket() // man 7 socket
+bind(fd, address)
+listen(fd)
+while true:
+  conn_fd = accept(fd)
+  process(fd)
+  close(fd)
+```
