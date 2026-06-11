@@ -35,6 +35,17 @@ lib functions (`3`), and misc (`7`).
 | `bind` | `#include <sys/socket.h>` | `man 2 bind` |
 | `getprotoent` | `#include <netdb.h>` | `man 3 getprotoent` |
 
+**Socket Connection Reusability and MSL Override**
+
+The `SO_REUSEADDR` option is used to modify socket connection behaviour.
+A common edge case in network programs is an event where a new program
+instance fails to connect to a previously used TCP port with stale
+packets. The `TIME_WAIT` state is established when a TCP connection is
+terminated via the four-way handshake to prevent loose packets from
+carrying over to a new program instance using the same port. In the
+syscall `setsockopt()` the `TIME_WAIT` period can be bypassed with the
+`SO_REUSEADDR` parameter.
+
 **TCP Server**
 
 Pseudocode
