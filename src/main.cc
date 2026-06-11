@@ -7,14 +7,14 @@
 
 int main() {
 
-  int error_number = 0;
-
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-  int value = 1;
+  int opt_value = 1;
+
+  int error_number = 0;
 
   try {
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) == -1) {
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == -1) {
       error_number = errno;
       throw std::runtime_error("Error: Socket options failed to set.");
     }
@@ -25,5 +25,6 @@ int main() {
   }
 
   return 0;
+
 }
 
