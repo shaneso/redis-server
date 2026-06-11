@@ -28,14 +28,14 @@ by running the `man` page commands provided in the terminal. You will find
 the name, synopsis, and descriptions for commands (`1`), syscalls (`2`),
 lib functions (`3`), and misc (`7`).
 
-| Name | Synopsis | Documentation |
-| ---- | -------- | ------------- |
-| `socket` | `#include <sys/socket.h>` | `man 7 socket` |
-| `setsockopt` | `#include <sys/socket.h>` | `man 3p setsockopt` |
-| `bind` | `#include <sys/socket.h>` | `man 2 bind` |
-| `getprotoent` | `#include <netdb.h>` | `man 3 getprotoent` |
-| `ip` | `#include <netinet/ip.h>` | `man 7 ip` |
-| `tcp` | `#include <netinet/tcp.h>` | `man 7 tcp` |
+| Name          | Synopsis                   | Documentation       |
+| ----          | --------                   | -------------       |
+| `socket`      | `#include <sys/socket.h>`  | `man 7 socket`      |
+| `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt` |
+| `bind`        | `#include <sys/socket.h>`  | `man 2 bind`        |
+| `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent` |
+| `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`          |
+| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`         |
 
 **Socket Connection Reusability and MSL Override**
 
