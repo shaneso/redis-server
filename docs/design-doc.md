@@ -34,6 +34,8 @@ lib functions (`3`), and misc (`7`).
 | `setsockopt` | `#include <sys/socket.h>` | `man 3p setsockopt` |
 | `bind` | `#include <sys/socket.h>` | `man 2 bind` |
 | `getprotoent` | `#include <netdb.h>` | `man 3 getprotoent` |
+| `ip` | `#include <netinet/ip.h>` | `man 7 ip` |
+| `tcp` | `#include <netinet/tcp.h>` | `man 7 tcp` |
 
 **Socket Connection Reusability and MSL Override**
 
