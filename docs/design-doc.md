@@ -10,16 +10,16 @@
 
 **Socket Programming**
 
-| Method      | Purpose                                                 |
-| ------      | -------                                                 |
-| `socket()`  | Allocates and returns a socket handle (`fd`)            |
-| `bind()`    | Sets the listening socket's IP port                     |
-| `listen()`  | Create a listening socket                               |
-| `connect()` | Create a TCP connection                                 |
-| `accept()`  | Wait for incoming TCP connections                       |
-| `read()`    | Reads data from byte stream                             |
-| `write()`   | Write data to byte stream                               |
-| `close()`   | Close the socket connection and free up space for OS    |
+| Method      | Purpose                                                |
+| ------      | -------                                                |
+| `socket()`  | Allocates and returns a socket handle (`fd`)           |
+| `bind()`    | Sets the listening socket's IP port                    |
+| `listen()`  | Creates a listening socket                             |
+| `connect()` | Creates a TCP connection                               |
+| `accept()`  | Waits for incoming TCP connections                     |
+| `read()`    | Reads data from byte stream                            |
+| `write()`   | Writes data to byte stream                             |
+| `close()`   | Closes the socket connection and frees up space for OS |
 
 **UNIX Syscall and Kernel Space API Documentation**
 
@@ -28,14 +28,15 @@ by running the `man` page commands provided in the terminal. You will find
 the name, synopsis, and descriptions for commands (`1`), syscalls (`2`),
 lib functions (`3`), and misc (`7`).
 
-| Name          | Synopsis                   | Documentation       |
-| ----          | --------                   | -------------       |
-| `socket`      | `#include <sys/socket.h>`  | `man 7 socket`      |
-| `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt` |
-| `bind`        | `#include <sys/socket.h>`  | `man 2 bind`        |
-| `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent` |
-| `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`          |
-| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`         |
+| Name          | Synopsis                   | Documentation           |
+| ----          | --------                   | -------------           |
+| `socket`      | `#include <sys/socket.h>`  | `man 7 socket`          |
+| `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
+| `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
+| `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
+| `sockaddr_in` | `#include <netinet/in.h>`  | `man 3type sockaddr_in` |
+| `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
+| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
 
 **Socket Connection Reusability and MSL Override**
 
@@ -47,6 +48,31 @@ terminated via the four-way handshake to prevent loose packets from
 carrying over to a new program instance using the same port. In the
 syscall `setsockopt()` the `TIME_WAIT` period can be bypassed with the
 `SO_REUSEADDR` parameter.
+
+**IPv4 Internet Socket Address Description**
+
+To specify the IP address and port for the TCP server, the `sockaddr_in`
+struct from the `netinet/in.h` package is used. In this struct, the
+socket internet family, port, and address can be initialized.
+
+**Endianness and Byte Order**
+
+Most modern architectures, including x86 and ARM, run in little-endian.
+Network byte orders in protocols like TCP/IP, however, are big-endian.
+To bridge the host layer with the network layer, the `hton`
+(host-to-network) and `ntoh` (network-to-host) functions from the
+`arpa/inet.h` library are used. Officially, the function names have
+suffixes, such as `s` for short and `l` for long, depending on the use
+case and byte size required. A table containing the endian reversal
+functions is provided for reference. Additional information is provided
+in the library functions manual on `man 3 byteorder`.
+
+| Function | Description                                                        |
+| -------- | -----------                                                        |
+| `htons`  | Converts an unsigned short integer from host to network byte order |
+| `htonl`  | Converts an unsigned integer from host to network byte order       |
+| `ntohs`  | Converts an unsigned short integer from network to host byte order |
+| `ntohl`  | Converts an unsigned integer from network to host byte order       |
 
 **TCP Server**
 

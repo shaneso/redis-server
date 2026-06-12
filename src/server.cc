@@ -32,6 +32,12 @@ int main() {
 
   // Bind selected IP address and port to socket
 
+  struct sockaddr_in addr = {
+    .sin_family = AF_INET, // IPv4 address scheme
+    .sin_port = htons(6379), // Default Redis data store port 6379
+    .sin_addr.s_addr = htonl((127 << 24) | (0 << 16) | (0 << 8) | 1) // Localhost 127.0.0.1
+  };
+
   return 0;
 
 }
