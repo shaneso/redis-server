@@ -30,15 +30,16 @@ lib functions (`3`), and misc (`7`).
 
 | Name          | Synopsis                   | Documentation           |
 | ----          | --------                   | -------------           |
+| `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
+| `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
+| `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
+| `listen`      | `#include <sys/socket.h>`  | `man 2 listen`          |
+| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
+| `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
 | `socket`      | `#include <sys/socket.h>`  | `man 2 socket`          |
 | `socket`      | `#include <sys/socket.h>`  | `man 7 socket`          |
-| `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
-| `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
 | `sockaddr`    | `#include <sys/socket.h>`  | `man 3type sockaddr`    |
-| `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
 | `sockaddr_in` | `#include <netinet/in.h>`  | `man 3type sockaddr_in` |
-| `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
-| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
 
 **Socket Connection Reusability and MSL Override**
 
