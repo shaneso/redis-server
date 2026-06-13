@@ -21,7 +21,7 @@
 | `write()`   | Writes data to byte stream                             |
 | `close()`   | Closes the socket connection and frees up space for OS |
 
-**UNIX Syscall and Kernel Space API Documentation**
+**UNIX C Library, Syscall, and Kernel Space API Documentation**
 
 Documentation for Linux and POSIX syscalls and API methods can be accessed
 by running the `man` page commands provided in the terminal. You will find
@@ -30,9 +30,11 @@ lib functions (`3`), and misc (`7`).
 
 | Name          | Synopsis                   | Documentation           |
 | ----          | --------                   | -------------           |
+| `socket`      | `#include <sys/socket.h>`  | `man 2 socket`          |
 | `socket`      | `#include <sys/socket.h>`  | `man 7 socket`          |
 | `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
 | `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
+| `sockaddr`    | `#include <sys/socket.h>`  | `man 3type sockaddr`    |
 | `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
 | `sockaddr_in` | `#include <netinet/in.h>`  | `man 3type sockaddr_in` |
 | `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |

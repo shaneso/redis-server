@@ -1,11 +1,23 @@
 #include <arpa/inet.h>
 #include <cerrno>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <netinet/in.h>
 #include <stdexcept>
 #include <sys/socket.h>
+
+/**
+ * @brief Formats and logs an error message corresponding to a failed process.
+ * 
+ * @param exit_code is the exit value
+ * @param message is the error message log
+ */
+void err(int exit_code, const char* message) {
+  std::cerr << message << ": " << std::strerror(errno) << std::endl;
+  std::exit(exit_code);
+}
 
 int main() {
 
@@ -13,24 +25,18 @@ int main() {
 
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-  int opt_value = 1;
+  // Check socket handle (fd) status
 
-  int error_number = 0;
+  if (sockfd == -1)
+    err(EXIT_FAILURE, "Socket");
+
+  int opt_value = 1; // Set socket option value param
 
   // Set socket options
+  if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == -1)
+    err(EXIT_FAILURE, "Socket option");
 
-  try {
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == -1) {
-      error_number = errno;
-      throw std::runtime_error("Error: Socket options failed to set.");
-    }
-  }
-  catch (const std::runtime_error& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    std::cerr << "Log: " << std::strerror(error_number) << std::endl;
-  }
-
-  // Bind selected IP address and port to socket
+  // Initialize socket address config
 
   struct sockaddr_in addr = {
     .sin_family = AF_INET, // IPv4 address scheme
@@ -41,7 +47,12 @@ int main() {
     .sin_zero = {} // Byte padding for struct memory alignment
   };
 
-  return 0;
+  // Bind selected IP address and port to socket
+
+  if (bind(sockfd, (struct sockaddr*) &addr, sizeof(addr)) == -1)
+    err(EXIT_FAILURE, "Bind");
+
+  return EXIT_SUCCESS;
 
 }
 
