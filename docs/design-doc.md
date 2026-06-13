@@ -30,6 +30,7 @@ lib functions (`3`), and misc (`7`).
 
 | Name          | Synopsis                   | Documentation           |
 | ----          | --------                   | -------------           |
+| `accept`      | `#include <sys/socket.h>`  | `man 2 listen`          |
 | `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
 | `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
 | `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
