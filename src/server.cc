@@ -21,11 +21,13 @@ void err(int exit_code, const char* message) {
 
 int main() {
 
-  // Create socket handle (file descriptor)
+  int sockfd, retval;
 
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  // Create socket handle (fd)
 
-  // Check socket handle (fd) status
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+  // Check socket handle status
 
   if (sockfd == -1)
     err(EXIT_FAILURE, "Socket");
@@ -33,7 +35,12 @@ int main() {
   int opt_value = 1; // Set socket option value param
 
   // Set socket options
-  if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value)) == -1)
+
+  retval = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value));
+
+  // Check if socket options have been set
+
+  if (retval == -1)
     err(EXIT_FAILURE, "Socket option");
 
   // Initialize socket address config
@@ -49,7 +56,11 @@ int main() {
 
   // Bind selected IP address and port to socket
 
-  if (bind(sockfd, (struct sockaddr*) &addr, sizeof(addr)) == -1)
+  retval = bind(sockfd, (struct sockaddr*) &addr, sizeof(addr));
+
+  // Check bind status
+
+  if (retval == -1)
     err(EXIT_FAILURE, "Bind");
 
   return EXIT_SUCCESS;
