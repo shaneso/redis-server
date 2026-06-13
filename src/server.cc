@@ -38,7 +38,7 @@ int main() {
     .sin_addr = {
       .s_addr = htonl((127 << 24) | (0 << 16) | (0 << 8) | 1) // Localhost 127.0.0.1
     },
-    .sin_zero = {}
+    .sin_zero = {} // Byte padding for struct memory alignment
   };
 
   return 0;
