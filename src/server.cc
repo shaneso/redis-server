@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <sys/socket.h>
 
+#define BACKLOG SOMAXCONN // Socket max connections (/proc/sys/net)
+
 /**
  * @brief Formats and logs an error message corresponding to a failed process.
  * 
@@ -20,6 +22,8 @@ void err(int exit_code, const char* message) {
 }
 
 int main() {
+
+  // Socket handle and return value
 
   int sockfd, retval;
 
@@ -62,6 +66,15 @@ int main() {
 
   if (retval == -1)
     err(EXIT_FAILURE, "Bind");
+  
+  // Listen for connections on a socket
+
+  retval = listen(sockfd, BACKLOG);
+
+  // Check if socket is established as passive
+
+  if (retval == -1)
+    err(EXIT_FAILURE, "Listen");
 
   return EXIT_SUCCESS;
 

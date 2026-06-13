@@ -83,7 +83,7 @@ in the library functions manual on `man 3 byteorder`.
 Pseudocode
 
 ```
-fd = socket() // man 7 socket
+fd = socket()
 bind(fd, address)
 listen(fd)
 while true:
