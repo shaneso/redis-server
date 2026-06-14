@@ -1,12 +1,11 @@
 #include <arpa/inet.h>
 #include <cerrno>
-#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <netinet/in.h>
-#include <stdexcept>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #define BACKLOG SOMAXCONN // Socket max connections (/proc/sys/net)
 
@@ -17,15 +16,17 @@
  * @param message is the error message log
  */
 void err(int exit_code, const char* message) {
-  std::cerr << message << ": " << std::strerror(errno) << std::endl;
+  std::cerr << "[" << message << "] " << std::strerror(errno) << std::endl;
   std::exit(exit_code);
 }
 
 int main() {
 
-  // Socket handle and return value
+  int sockfd, connfd; // Socket handles for server and client
 
-  int sockfd, retval;
+  int retval; // Return value
+
+  socklen_t addrlen_s, addrlen_c; // Server and client socket address lengths
 
   // Create socket handle (fd)
 
@@ -47,9 +48,9 @@ int main() {
   if (retval == -1)
     err(EXIT_FAILURE, "Socket option");
 
-  // Initialize socket address config
+  // Initialize server socket endpoint scheme
 
-  struct sockaddr_in addr = {
+  struct sockaddr_in serv_addr = {
     .sin_family = AF_INET, // IPv4 address scheme
     .sin_port = htons(6379), // Default Redis data store port 6379
     .sin_addr = {
@@ -58,9 +59,12 @@ int main() {
     .sin_zero = {} // Byte padding for struct memory alignment
   };
 
-  // Bind selected IP address and port to socket
+  addrlen_s = sizeof(serv_addr);
 
-  retval = bind(sockfd, (struct sockaddr*) &addr, sizeof(addr));
+  // Bind selected IP address and port to socket
+  // addrlen_s passed to bind syscall as socklen_t
+
+  retval = bind(sockfd, (struct sockaddr*) &serv_addr, addrlen_s);
 
   // Check bind status
 
@@ -75,6 +79,40 @@ int main() {
 
   if (retval == -1)
     err(EXIT_FAILURE, "Listen");
+  
+  // Initialize client socket endpoint scheme
+
+  struct sockaddr_in client_addr = {};
+
+  // Accept and handle client connections
+
+  while (1) {
+
+    // Initialize client endpoint address length (IP protocol-agnostic)
+
+    addrlen_c = sizeof(client_addr);
+
+    // Accept client connection request and return socket handle
+    // addrlen_c passed to accept syscall as pointer
+
+    connfd = accept(sockfd, (struct sockaddr*) &client_addr, &addrlen_c);
+
+    // Check if client connection request has been accepted
+
+    if (connfd == -1)
+      err(EXIT_FAILURE, "Accept");
+
+    // Close connfd connection
+    
+    close(connfd);
+
+  }
+
+  // Close sockfd connection
+
+  close(sockfd);
+
+  // Exit program
 
   return EXIT_SUCCESS;
 
