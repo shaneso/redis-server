@@ -109,3 +109,15 @@ while true:
   close(fd)
 ```
 
+**TCP Client**
+
+Pseudocode
+
+```
+fd = socket()
+connect(fd)
+while true:
+  send(fd)
+  recv(fd)
+close(fd)
+```
