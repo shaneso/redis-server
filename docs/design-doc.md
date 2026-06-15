@@ -67,7 +67,10 @@ syscall `setsockopt()` the `TIME_WAIT` period can be bypassed with the
 
 To specify the IP address and port for the TCP server, the `sockaddr_in`
 struct from the `netinet/in.h` package is used. In this struct, the
-socket internet family, port, and address can be initialized.
+socket internet family, port, and address can be initialized. The `ip`
+documentation in `man 7 ip` lists predefined addresses under the
+**Special and reserved addresses** section, which include values such as
+`INADDR_LOOPBACK`, `INADDR_ANY`, and `INADDR_BROADCAST`.
 
 **Endianness and Byte Order**
 
