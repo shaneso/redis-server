@@ -3,11 +3,10 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-// libc
+// stdlib
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
-// libc++
 #include <iostream>
 
 #define BACKLOG SOMAXCONN // Socket max connections (/proc/sys/net)
