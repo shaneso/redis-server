@@ -9,7 +9,6 @@
 ### Proposed Features
 
 - RDB persistence for permanent data and kv storage
-- Multithreaded client handling
 - `epoll` API and event-based concurrency
 
 ### Architecture
@@ -42,7 +41,8 @@ lib functions (`3`), and misc (`7`).
 | `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
 | `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
 | `listen`      | `#include <sys/socket.h>`  | `man 2 listen`          |
-| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
+| `recv`        | `#include <sys/socket.h>`  | `man 2 recv`            |
+| `send`        | `#include <sys/socket.h>`  | `man 2 send`            |
 | `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
 | `size_t`      | `#include <stddef.h>`      | `man 3type size_t`      |
 | `ssize_t`     | `#include <sys/types.h>`   | `man 3type ssize_t`     |
@@ -50,6 +50,7 @@ lib functions (`3`), and misc (`7`).
 | `socket`      | `#include <sys/socket.h>`  | `man 7 socket`          |
 | `sockaddr`    | `#include <sys/socket.h>`  | `man 3type sockaddr`    |
 | `sockaddr_in` | `#include <netinet/in.h>`  | `man 3type sockaddr_in` |
+| `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
 
 **Socket Connection Reusability and MSL Override**
 
@@ -86,6 +87,13 @@ in the library functions manual on `man 3 byteorder`.
 | `htonl`  | Converts an unsigned integer from host to network byte order       |
 | `ntohs`  | Converts an unsigned short integer from network to host byte order |
 | `ntohl`  | Converts an unsigned integer from network to host byte order       |
+
+**Socket I/O**
+
+For data transmission on a socket, the `recv` and `send` syscalls will be used.
+Since both operations may return `-1` when an error has occured, the `ssize_t`
+data type will be used to retrieve the return value. The `recv` call is for
+reading buffer data and `send` is for writing data to the buffer.
 
 **TCP Server**
 
