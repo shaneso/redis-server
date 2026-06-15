@@ -22,6 +22,30 @@ void err(int exit_code, const char* message) {
   std::exit(exit_code);
 }
 
+// test process
+
+void proc(int connfd) {
+
+  int retval;
+
+  char rbuf[64] = {};
+
+  retval = recv(connfd, rbuf, sizeof(rbuf) - 1, 0);
+
+  if (retval == -1)
+    err(EXIT_FAILURE, "receive");
+
+  std::cout << "client: " << rbuf << std::endl;
+
+  char wbuf[] = "world";
+
+  retval = send(connfd, wbuf, std::strlen(wbuf), 0);
+
+  if (retval == -1)
+    err(EXIT_FAILURE, "send");
+
+}
+
 int main() {
 
   int sockfd, connfd; // Socket handles for server and client
@@ -103,6 +127,10 @@ int main() {
 
     if (connfd == -1)
       err(EXIT_FAILURE, "Accept");
+    
+    // Process
+
+    proc(connfd);
 
     // Close connfd connection
     
