@@ -6,6 +6,12 @@
 
 **Data Store**: Persistence via RDB (snapshots) + AOF (Append-Only File)
 
+### Proposed Features
+
+- RDB persistence for permanent data and kv storage
+- Multithreaded client handling
+- `epoll` API and event-based concurrency
+
 ### Architecture
 
 **Socket Programming**
@@ -32,11 +38,14 @@ lib functions (`3`), and misc (`7`).
 | ----          | --------                   | -------------           |
 | `accept`      | `#include <sys/socket.h>`  | `man 2 accept`          |
 | `bind`        | `#include <sys/socket.h>`  | `man 2 bind`            |
+| `epoll`       | `#include <sys/epoll.h>`   | `man 7 epoll`           |
 | `getprotoent` | `#include <netdb.h>`       | `man 3 getprotoent`     |
 | `ip`          | `#include <netinet/ip.h>`  | `man 7 ip`              |
 | `listen`      | `#include <sys/socket.h>`  | `man 2 listen`          |
 | `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
 | `setsockopt`  | `#include <sys/socket.h>`  | `man 3p setsockopt`     |
+| `size_t`      | `#include <stddef.h>`      | `man 3type size_t`      |
+| `ssize_t`     | `#include <sys/types.h>`   | `man 3type ssize_t`     |
 | `socket`      | `#include <sys/socket.h>`  | `man 2 socket`          |
 | `socket`      | `#include <sys/socket.h>`  | `man 7 socket`          |
 | `sockaddr`    | `#include <sys/socket.h>`  | `man 3type sockaddr`    |
