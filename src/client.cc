@@ -6,22 +6,20 @@
 #include <cerrno>
 #include <cstring>
 #include <iostream>
+// project
+#include "err.h"
 
 int main() {
+  int sockfd; // Socket handle for TCP connection
+  ssize_t retval; // Return value
 
-  int sockfd; // fd
-
-  ssize_t retval; // return value
-
-  // socket
-
+  // Socket handle
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
+  // Check if socket handle has been returned successfully
   if (sockfd == -1)
     std::cerr << "socket error" << std::endl;
 
-  // sockaddr
-
+  // Initialize server socket endpoint scheme
   struct sockaddr_in cli_addr = {
     .sin_family = AF_INET,
     .sin_port = htons(6379),
@@ -31,34 +29,29 @@ int main() {
     .sin_zero = {}
   };
 
-  // connect
+  // Connect socket
+  retval = connect(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr));
+  // Check if socket has been connected successfully
+  if (retval == -1)
+    std::cerr << "Connect" << std::endl;
 
-  if (connect(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)))
-    std::cerr << "connect error" << std::endl;
-  
-  // send
-
+  // Write buffer
   char wbuf[] = "hello";
-
+  // Send buffer data
   retval = send(sockfd, wbuf, std::strlen(wbuf), 0);
-
+  // Check if buffer msg has been sent
   if (retval == -1)
-    std::cerr << "send error" << std::endl;
-
-  // read
-
-  char rbuf[64] = {};
-
-  retval = recv(sockfd, rbuf, sizeof(rbuf) - 1, 0);
-
-  if (retval == -1)
-    std::cerr << "receive error" << std::endl;
+    err(EXIT_FAILURE, "Send");
   
-  // print
-
-  std::cout << "server: " << rbuf << std::endl;
-
-  // close
+  // Read buffer
+  char rbuf[64] = {};
+  // Receive buffer data
+  retval = recv(sockfd, rbuf, sizeof(rbuf) - 1, 0);
+  // Check if buffer msg has been received
+  if (retval == -1)
+    err(EXIT_FAILURE, "Receive");
+  
+  std::cout << "Server: " << rbuf << std::endl;
 
   close(sockfd);
 
