@@ -16,3 +16,15 @@ scheme, which is equivalent to `0.0.0.0` in IPv4.
 Once these values have been set, the user may run the server and the client
 on separate machines within the LAN.
 
+**Note**: If the user is running the server in WSL, the IP address may not
+match with the host machine scheme on Windows. To solve this, a `.wslconfig`
+file may be created in the `%USERNAME$` directory with the contents
+
+```
+[wsl2]
+networkingMode=mirrored
+dnsTunnel=true
+```
+
+Save the file and run `wsl --shutdown` in the terminal, then start WSL. When the user runs `ip a` the native IP address should show now.
+
