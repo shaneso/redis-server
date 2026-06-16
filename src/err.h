@@ -3,6 +3,11 @@
 #ifndef ERR_H
 #define ERR_H
 
+// stdlib
+#include <cerrno>
+#include <cstring>
+#include <iostream>
+
 /**
  * @brief Formats and logs an error message corresponding to a failed process.
  * 

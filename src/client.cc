@@ -17,14 +17,14 @@ int main() {
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   // Check if socket handle has been returned successfully
   if (sockfd == -1)
-    std::cerr << "socket error" << std::endl;
+    err(EXIT_FAILURE, "Socket");
 
   // Initialize server socket endpoint scheme
   struct sockaddr_in cli_addr = {
     .sin_family = AF_INET,
     .sin_port = htons(6379),
     .sin_addr = {
-      .s_addr = htonl(INADDR_LOOPBACK)
+      .s_addr = htonl(INADDR_LOOPBACK) // Localhost 127.0.0.1
     },
     .sin_zero = {}
   };
@@ -33,7 +33,7 @@ int main() {
   retval = connect(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr));
   // Check if socket has been connected successfully
   if (retval == -1)
-    std::cerr << "Connect" << std::endl;
+    err(EXIT_FAILURE, "Connect");
 
   // Write buffer
   char wbuf[] = "hello";
@@ -54,6 +54,5 @@ int main() {
   std::cout << "Server: " << rbuf << std::endl;
 
   close(sockfd);
-
 }
 

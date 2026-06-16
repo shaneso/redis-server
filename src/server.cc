@@ -11,7 +11,8 @@
 // project
 #include "err.h"
 
-#define BACKLOG SOMAXCONN // Socket max connections (/proc/sys/net)
+// Socket max connections (/proc/sys/net)
+#define BACKLOG SOMAXCONN
 
 /**
  * @brief Processes buffer data I/O
@@ -59,7 +60,8 @@ int main() {
     .sin_family = AF_INET, // IPv4 address scheme
     .sin_port = htons(6379), // Default Redis data store port 6379
     .sin_addr = {
-      .s_addr = htonl((127 << 24) | (0 << 16) | (0 << 8) | 1) // Localhost 127.0.0.1
+      .s_addr = htonl(INADDR_LOOPBACK) // Localhost 127.0.0.1
+      // .s_addr = htonl((127 << 24) | (0 << 16) | (0 << 8) | 1) // Localhost 127.0.0.1
     },
     .sin_zero = {} // Byte padding for struct memory alignment
   };
