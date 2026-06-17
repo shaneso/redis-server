@@ -28,3 +28,32 @@ dnsTunnel=true
 
 Save the file and run `wsl --shutdown` in the terminal, then start WSL. When the user runs `ip a` the native IP address should show now.
 
+### Valgrind Memory and Cache Profiling
+
+**Cache Profiling Commands**
+
+| Command                                       | Description |
+| -------                                       | ----------- |
+| `valgrind --tool=cachegrind ./<program>` | Runs Cachegrind on `<program>` and outputs a `cachegrind.out.<pid>` file |
+| `cg_annotate cachegrind.out.<pid>`       | Processes the simulation output file into readable text                  |
+
+**Note**: More information on Valgrind commands can be retrieved by running `man 1 valgrind`. The `--cache-sim=yes` tag
+is used to enable collection of cache access and miss counts. This is important for tracking cache in multiple tiers,
+which is important when computing instruction performance ratios and benchmarking CPU efficiency.
+
+**Metrics**
+
+| Metric | Measurement                      | Description                    |
+| ------ | -----------                      | -----------                    |
+| `Dlmr` | `L1` data cache misses (reads)   | Frequency of missing hot data  |
+| `Dlmw` | `L1` data cache misses (writes)  | Write performance              |
+| `LLdr` | Last-level cache misses          | Frequency of fetching from RAM |
+| `LLdw` | Last-level cache misses (writes) | Memory bandwith bottleneck     |
+| `Dr`   | Data cache reads                 | Program data read count        |
+| `Dw`   | Data cache writes                | Program data write count       |
+
+**Note**: The objective of cache performance optimization is to minimize
+`LLdr` and `LLdw` aggressively, while still maintaining low cache misses on
+`L2` and `L3`. This is because cache offsetting at the last-level cache (RAM)
+is much more costly compared to hitting on-chip cache tiers.
+
