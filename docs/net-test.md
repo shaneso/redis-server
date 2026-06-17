@@ -32,10 +32,10 @@ Save the file and run `wsl --shutdown` in the terminal, then start WSL. When the
 
 **Cache Profiling Commands**
 
-| Command                                       | Description                                                              |
-| -------                                       | -----------                                                              |
-| `valgrind --tool=cachegrind ./<program>`      | Runs Cachegrind on `<program>` and outputs a `cachegrind.out.<pid>` file |
-| `cg_annotate cachegrind.out.<pid>`            | Processes the simulation output file into readable text                  |
+| Command                                  | Description                                                              |
+| -------                                  | -----------                                                              |
+| `valgrind --tool=cachegrind ./<program>` | Runs Cachegrind on `<program>` and outputs a `cachegrind.out.<pid>` file |
+| `cg_annotate cachegrind.out.<pid>`       | Processes the simulation output file into readable text                  |
 
 **Note**: More information on Valgrind commands can be retrieved by running `man 1 valgrind`. The `--cache-sim=yes` tag
 is used to enable collection of cache access and miss counts. This is important for tracking cache in multiple tiers,
