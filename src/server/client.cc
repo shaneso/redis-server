@@ -7,7 +7,7 @@
 #include <cstring>
 #include <iostream>
 // project
-#include "err.h"
+#include "src/util/logging.h"
 
 int main() {
   int sockfd; // Socket handle for TCP connection
