@@ -7,7 +7,7 @@
 #include <cstring>
 #include <iostream>
 // project
-#include "src/util/logging.h"
+#include "src/utils/utils.h"
 
 int main() {
   int sockfd; // Socket handle for TCP connection

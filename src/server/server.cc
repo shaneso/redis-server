@@ -9,7 +9,7 @@
 #include <cstring>
 #include <iostream>
 // project
-#include "src/util/logging.h"
+#include "src/utils/utils.h"
 
 // Socket max connections (/proc/sys/net)
 #define BACKLOG SOMAXCONN
