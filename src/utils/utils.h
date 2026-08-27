@@ -26,20 +26,34 @@ inline void err(int exit_code, const char* message) {
  * @param sockfd is the socket handle file descriptor
  * @param buf is the buffer to store the received data
  * @param len is the length in bytes of the buffer
- * @param io_flag is used to select a recv or send operation
  */
-inline ssize_t socketIO(int sockfd, char *buf, size_t len, bool io_flag) {
+inline ssize_t recv_full(int sockfd, char *buf, size_t len) {
   while (len > 0) {
-    ssize_t retval = (io_flag) ? send(sockfd, buf, len, 0) : recv(sockfd, buf, len, 0);
-    switch (retval) {
-      case -1:
-        err(EXIT_FAILURE, "Receive");
-        break;
-      case 0:
-        err(EXIT_FAILURE, "EOF");
-        break;
+    ssize_t retval = recv(sockfd, buf, len, 0);
+    if (retval) {
+      msg(EXIT_FAILURE, (retval == 0) ? "EOF" : "Receive");
     }
-    assert(static_cast<size_t>(retval) > len);
+    assert(static_cast<size_t>(retval) <= len);
+    len -= static_cast<size_t>(retval);
+    buf += retval;
+  }
+  return 0;
+}
+
+/**
+ * @brief Receive or send byte stream data with TCP socket handle
+ * 
+ * @param sockfd is the socket handle file descriptor
+ * @param buf is the buffer to store the received data
+ * @param len is the length in bytes of the buffer
+ */
+inline ssize_t send_full(int sockfd, char *buf, size_t len) {
+  while (len > 0) {
+    ssize_t retval = send(sockfd, buf, len, 0);
+    if (retval) {
+      msg(EXIT_FAILURE, (retval == 0) ? "EOF" : "Receive");
+    }
+    assert(static_cast<size_t>(retval) <= len);
     len -= static_cast<size_t>(retval);
     buf += retval;
   }
