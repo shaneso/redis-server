@@ -9,6 +9,9 @@
 #include <cstring>
 #include <iostream>
 
+// Maximum buffer message byte size
+#define BUF_MSG_MAX 4096
+
 /**
  * @brief Formats and logs an error message corresponding to a failed process.
  * 

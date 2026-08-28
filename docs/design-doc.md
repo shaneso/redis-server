@@ -127,3 +127,22 @@ while true:
 close(fd)
 ```
 
+**Server-Side Request Procedure**
+
+- Initialize read/receive buffer with header and message byte size
+- Reassign errno to 0
+- Read full header and retrieve return value
+- Check if return value is 0 (EOF) or -1 (error)
+- Initialize length to 0
+- Copy header value of read/receive buffer to the length
+- Check if length value is greater than the max buffer message size
+- Read full message body, starting at header endpoint index
+- Check if read/receive returns an error
+- Process client request
+- Initialize char array message
+- Declare write buffer with total byte stream size
+- Reassign length to string length of write message
+- Copy length header values to write buffer
+- Starting at the header endpoint, copy the message data to the write buffer
+- Return write/send status return value
+
