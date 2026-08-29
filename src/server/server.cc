@@ -19,20 +19,20 @@
  * 
  * @param connfd is the connection-mode socket handle
  */
-void proc(int connfd) {
-  int retval;
-  char rbuf[64] = {};
+void proc_request(int connfd) {
+  // int retval;
+  // char rbuf[64] = {};
 
-  retval = recv(connfd, rbuf, sizeof(rbuf) - 1, 0);
-  if (retval == -1)
-    err(EXIT_FAILURE, "Receive");
+  // retval = recv(connfd, rbuf, sizeof(rbuf) - 1, 0);
+  // if (retval == -1)
+  //   err(EXIT_FAILURE, "Receive");
 
-  std::cout << "Client: " << rbuf << std::endl;
+  // std::cout << "Client: " << rbuf << std::endl;
 
-  char wbuf[] = "world";
-  retval = send(connfd, wbuf, std::strlen(wbuf), 0);
-  if (retval == -1)
-    err(EXIT_FAILURE, "Send");
+  // char wbuf[] = "world";
+  // retval = send(connfd, wbuf, std::strlen(wbuf), 0);
+  // if (retval == -1)
+  //   err(EXIT_FAILURE, "Send");
 }
 
 int main() {
@@ -45,7 +45,7 @@ int main() {
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   // Check socket handle has been returned successfully
   if (sockfd == -1)
-    err(EXIT_FAILURE, "Socket");
+    msg(EXIT_FAILURE, "Socket");
 
   int opt_value = 1; // Set socket option value param
 
@@ -53,7 +53,7 @@ int main() {
   retval = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_value, sizeof(opt_value));
   // Check if socket options have been set
   if (retval == -1)
-    err(EXIT_FAILURE, "Socket option");
+    msg(EXIT_FAILURE, "Socket option");
 
   // Initialize server socket endpoint scheme
   struct sockaddr_in serv_addr = {
@@ -74,14 +74,14 @@ int main() {
 
   // Check bind status
   if (retval == -1)
-    err(EXIT_FAILURE, "Bind");
+    msg(EXIT_FAILURE, "Bind");
   
   // Listen for connections on a socket
   retval = listen(sockfd, BACKLOG);
 
   // Check if socket is established as passive
   if (retval == -1)
-    err(EXIT_FAILURE, "Listen");
+    msg(EXIT_FAILURE, "Listen");
   
   // Initialize client socket endpoint scheme
   struct sockaddr_in client_addr = {};
@@ -95,8 +95,8 @@ int main() {
     connfd = accept(sockfd, (struct sockaddr*) &client_addr, &addrlen_c);
     // Check if client connection request has been accepted
     if (connfd == -1)
-      err(EXIT_FAILURE, "Accept");
-    proc(connfd);
+      msg(EXIT_FAILURE, "Accept");
+    proc_request(connfd);
     close(connfd);
   }
 
