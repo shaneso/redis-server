@@ -20,19 +20,40 @@
  * @param connfd is the connection-mode socket handle
  */
 void proc_request(int connfd) {
-  // int retval;
-  // char rbuf[64] = {};
+  // Allocate message byte size to the receive buffer
+  char rbuf[4 + BUF_MSG_MAX];
+  // Clear the error exit code
+  errno = 0;
+  ssize_t retval = recv_full(connfd, rbuf, 4);
+  if (retval) {
+    msg(EXIT_FAILURE, (errno == 0) ? "EOF" : "Receive" );
+    return retval;
+  }
+  uint32_t len = 0;
+  // Copy message header from buffer to the length value
+  memcpy(&len, rbuf, 4);
+  // Check if message length exceeds the buffer limit
+  if (len > BUF_MSG_MAX) {
+    msg(EXIT_FAILURE, "Overflow");
+    return -1;
+  }
+  // Receive the request and return status
+  retval = recv_full(connfd, &rbuf[4], len);
+  if (retval) {
+    msg(EXIT_FAILURE, "Receive");
+    return retval;
+  }
+  // Print received message
+  std::cout << "Client: ";
+  std::cout.write(&rbuf[4], len) << std::endl;
 
-  // retval = recv(connfd, rbuf, sizeof(rbuf) - 1, 0);
-  // if (retval == -1)
-  //   err(EXIT_FAILURE, "Receive");
-
-  // std::cout << "Client: " << rbuf << std::endl;
-
-  // char wbuf[] = "world";
-  // retval = send(connfd, wbuf, std::strlen(wbuf), 0);
-  // if (retval == -1)
-  //   err(EXIT_FAILURE, "Send");
+  // Response
+  const char response[] = "world";
+  char wbuf[4 + sizeof(response)];
+  len = static_cast<uint32_t>strlen(response);
+  memcpy(wbuf, &len, 4);
+  memcpy(&wbuf[4], response, len);
+  return send_full(connfd, wbuf, 4 + len);
 }
 
 int main() {
