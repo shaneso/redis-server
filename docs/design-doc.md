@@ -130,3 +130,7 @@ close(fd)
 **Request-Response Control Procedure**
 
 When processing a client request server-side, the receiving buffer size should be initialized with the message byte size limit. If any fixed-size padding is included in the request-response protocol, this is to be included in the read buffer size initialization. If `errno` is used, it may be cleared to `0` before running the full `recv()` or `read()` procedure, as to cover `EOF` and `error` codes. When the message length value is extracted from the fixed-size header, the length must not exceed the size limit. A basic overflow error handle will suffice. Once the message has been processed, a server response may be sent. Moreover, `memcpy()` may be used to copy select bytes from a `src` to a `dest`.
+
+**RESP Protocol Specification**
+
+Clients write commands and queries to the server as an array of bulk (binary) strings. String encoding is prefixed by a `$` as the first byte, followed by a base-10 value representing the length of the message. After the header, the message is wrapped in `\r\n` (CRLF) on both sides as terminating delimiters.
