@@ -127,22 +127,6 @@ while true:
 close(fd)
 ```
 
-**Server-Side Request Procedure**
+**Request Control Procedure**
 
-- Initialize read/receive buffer with header and message byte size
-- Reassign errno to 0
-- Read full header and retrieve return value
-- Check if return value is 0 (EOF) or -1 (error)
-- Initialize length to 0
-- Copy header value of read/receive buffer to the length
-- Check if length value is greater than the max buffer message size
-- Read full message body, starting at header endpoint index
-- Check if read/receive returns an error
-- Process client request
-- Initialize char array message
-- Declare write buffer with total byte stream size
-- Reassign length to string length of write message
-- Copy length header values to write buffer
-- Starting at the header endpoint, copy the message data to the write buffer
-- Return write/send status return value
-
+When processing a client request server-side, the receiving buffer size should be initialized with the message byte size limit. If any fixed-size padding is included in the request-response protocol, this is to be included in the read buffer size initialization. If `errno` is used, it may be cleared to `0` before running the full `recv()` or `read()` procedure, as to cover `EOF` and `error` codes. When the message length value is extracted from the fixed-size header, the length must not exceed the size limit. A basic overflow error handle will suffice. Once the message has been processed, a server response may be sent. Moreover, `memcpy()` may be used to copy select bytes from a `src` to a `dest`.

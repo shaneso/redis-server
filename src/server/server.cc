@@ -18,8 +18,9 @@
  * @brief Processes buffer data I/O
  * 
  * @param connfd is the connection-mode socket handle
+ * @return exit code
  */
-void proc_request(int connfd) {
+ssize_t proc_request(int connfd) {
   // Allocate message byte size to the receive buffer
   char rbuf[4 + BUF_MSG_MAX];
   // Clear the error exit code
