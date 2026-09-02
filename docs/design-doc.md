@@ -1,19 +1,19 @@
-## Redis Server Design Doc
+# Redis Server Design Doc
 
-### Properties
+## Properties
 
 **Protocol**: TCP/IP
 
 **Data Store**: Persistence via RDB (snapshots) + AOF (Append-Only File)
 
-### Proposed Features
+## Proposed Features
 
 - RDB persistence for permanent data and kv storage
 - `epoll` API and event-based concurrency
 
-### Architecture
+## Architecture
 
-**Socket Programming**
+### Socket Programming
 
 | Method      | Purpose                                                |
 | ------      | -------                                                |
@@ -26,7 +26,7 @@
 | `write()`   | Writes data to byte stream                             |
 | `close()`   | Closes the socket connection and frees up space for OS |
 
-**UNIX C Library, Syscall, and Kernel Space API Documentation**
+### UNIX C Library, Syscall, and Kernel Space API Documentation
 
 Documentation for Linux and POSIX syscalls and API methods can be accessed
 by running the `man` page commands provided in the terminal. You will find
@@ -54,7 +54,7 @@ lib functions (`3`), and misc (`7`).
 | `sockaddr_in` | `#include <netinet/in.h>`  | `man 3type sockaddr_in` |
 | `tcp`         | `#include <netinet/tcp.h>` | `man 7 tcp`             |
 
-**Socket Connection Reusability and MSL Override**
+### Socket Connection Reusability and MSL Override
 
 The `SO_REUSEADDR` option is used to modify socket connection behaviour.
 A common edge case in network programs is an event where a new program
@@ -65,7 +65,7 @@ carrying over to a new program instance using the same port. In the
 syscall `setsockopt()` the `TIME_WAIT` period can be bypassed with the
 `SO_REUSEADDR` parameter.
 
-**IPv4 Internet Socket Address Description**
+### IPv4 Internet Socket Address Description
 
 To specify the IP address and port for the TCP server, the `sockaddr_in`
 struct from the `netinet/in.h` package is used. In this struct, the
@@ -74,7 +74,7 @@ documentation in `man 7 ip` lists predefined addresses under the
 **Special and reserved addresses** section, which include values such as
 `INADDR_LOOPBACK`, `INADDR_ANY`, and `INADDR_BROADCAST`.
 
-**Endianness and Byte Order**
+### Endianness and Byte Order
 
 Most modern architectures, including x86 and ARM, run in little-endian.
 Network byte orders in protocols like TCP/IP, however, are big-endian.
@@ -93,7 +93,7 @@ in the library functions manual on `man 3 byteorder`.
 | `ntohs`  | Converts an unsigned short integer from network to host byte order |
 | `ntohl`  | Converts an unsigned integer from network to host byte order       |
 
-**Socket I/O**
+### Socket I/O
 
 For data transmission on a socket, the `recv` and `send` syscalls will be used.
 Since both operations may return `-1` when an error has occured, the `ssize_t`
@@ -127,10 +127,69 @@ while true:
 close(fd)
 ```
 
-**Request-Response Control Procedure**
+### Request-Response Control Procedure
 
 When processing a client request server-side, the receiving buffer size should be initialized with the message byte size limit. If any fixed-size padding is included in the request-response protocol, this is to be included in the read buffer size initialization. If `errno` is used, it may be cleared to `0` before running the full `recv()` or `read()` procedure, as to cover `EOF` and `error` codes. When the message length value is extracted from the fixed-size header, the length must not exceed the size limit. A basic overflow error handle will suffice. Once the message has been processed, a server response may be sent. Moreover, `memcpy()` may be used to copy select bytes from a `src` to a `dest`.
 
-**RESP Protocol Specification**
+### RESP Protocol Specification
 
 Clients write commands and queries to the server as an array of bulk (binary) strings. String encoding is prefixed by a `$` as the first byte, followed by a base-10 value representing the length of the message. After the header, the message is wrapped in `\r\n` (CRLF) on both sides as terminating delimiters.
+
+### RESP Protocol Parsing Algorithm
+
+```
+// Parsing control delegation
+char rbuf[]
+retval = recv(fd, rbuf, 1, 0)
+resp_data_type = rbuf[0]
+switch(resp_data_type)
+  case '$':
+    parse_bulk_string()
+  case '+':
+    parse_simple_string()
+  case '*':
+    parse_array()
+  case ':':
+    parse_integer()
+endswitch
+
+parse_bulk_string():
+  char blk_string[]
+  payload_len = 0
+  while (numeric) do:
+    payload_len += ascii_to_int(rbuf[i])
+    i++
+  endwhile
+  check CRLF terminator
+  while (i <= payload_len - 1) do:
+    blk_string += rbuf[i]
+  endwhile
+  check CRLF terminator
+  return exit code
+
+parse_simple_string():
+  recv(fd, rbuf, len, 0)
+  check CRLF terminator
+
+parse_array():
+  int num_of_elements = 0
+  while (numeric) do:
+    num_of_elements += ascii_to_int(rbuf[i])
+    i++
+  endwhile
+  for each e do:
+    switch (resp_data_type):
+    ...
+    endswitch
+  endfor
+
+parse_integer():
+  value = 0
+  while (numeric) do:
+    value += ascii_to_int(rbuf[i])
+    i++
+  endwhile
+  check CRLF terminator
+  return exit code
+```
+
