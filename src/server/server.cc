@@ -21,40 +21,11 @@
  * @return exit code
  */
 ssize_t proc_request(int connfd) {
-  // Allocate message byte size to the receive buffer
-  char rbuf[4 + BUF_MSG_MAX];
-  // Clear the error exit code
-  errno = 0;
-  ssize_t retval = recv_full(connfd, rbuf, 4);
-  if (retval) {
-    msg(EXIT_FAILURE, (errno == 0) ? "EOF" : "Receive" );
-    return retval;
-  }
-  uint32_t len = 0;
-  // Copy message header from buffer to the length value
-  memcpy(&len, rbuf, 4);
-  // Check if message length exceeds the buffer limit
-  if (len > BUF_MSG_MAX) {
-    msg(EXIT_FAILURE, "Overflow");
-    return -1;
-  }
-  // Receive the request and return status
-  retval = recv_full(connfd, &rbuf[4], len);
-  if (retval) {
-    msg(EXIT_FAILURE, "Receive");
-    return retval;
-  }
-  // Print received message
-  std::cout << "Client: ";
-  std::cout.write(&rbuf[4], len) << std::endl;
-
-  // Response
-  const char response[] = "world";
-  char wbuf[4 + sizeof(response)];
-  len = static_cast<uint32_t>strlen(response);
-  memcpy(wbuf, &len, 4);
-  memcpy(&wbuf[4], response, len);
-  return send_full(connfd, wbuf, 4 + len);
+  char rbuf[BUFFER_SIZE];
+  ssize_t retval = recv_full(connfd, rbuf, BUFFER_SIZE);
+  msg(EXIT_FAILURE, errno == 0 ? "EOF" : "Receive");
+  std::cout << retval << std::endl;
+  return 0;
 }
 
 int main() {
