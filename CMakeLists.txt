@@ -4,18 +4,28 @@ project(kv_store CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add your library
-add_library(kv_store_lib 
-  src/kv_store.cpp
-  src/resp_parser.cpp
-)
+# Compiler warnings
+add_compile_options(-Wall -Wextra -Werror)
 
-# Add executable
-add_executable(kv_store_server src/main.cpp)
+# Auto-discover source files
+file(GLOB_RECURSE LIB_SOURCES "src/*.cc" "src/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "tests/*.cc" "tests/*.cpp")
+
+# Remove main executable from lib sources
+list(FILTER LIB_SOURCES EXCLUDE REGEX "server\\.cc$")
+
+# Library
+add_library(kv_store_lib ${LIB_SOURCES})
+target_include_directories(kv_store_lib PUBLIC include)
+
+# Server executable
+add_executable(kv_store_server src/server.cc)
 target_link_libraries(kv_store_server kv_store_lib)
 
-# Add tests
-enable_testing()
-add_executable(kv_store_test tests/test_kv_store.cpp tests/test_resp_parser.cpp)
-target_link_libraries(kv_store_test kv_store_lib)
-add_test(NAME KVStoreTests COMMAND kv_store_test)
+# Tests (only if tests/ directory exists)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+  enable_testing()
+  add_executable(kv_store_test ${TEST_SOURCES})
+  target_link_libraries(kv_store_test kv_store_lib)
+  add_test(NAME KVStoreTests COMMAND kv_store_test)
+endif()
