@@ -1,0 +1,49 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build and Test - ${{ matrix.distro }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.distro }}
+    strategy:
+      matrix:
+        distro: [ubuntu:latest, debian:latest, archlinux:latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu/Debian)
+      if: contains(matrix.distro, 'ubuntu') || contains(matrix.distro, 'debian')
+      run: |
+        apt-get update
+        apt-get install -y build-essential cmake valgrind
+
+    - name: Install dependencies (Arch)
+      if: contains(matrix.distro, 'archlinux')
+      run: |
+        pacman -Syu --noconfirm
+        pacman -S --noconfirm base-devel cmake valgrind
+
+    - name: Configure
+      run: |
+        cmake -B build \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_CXX_FLAGS="-Wall -Wextra -Werror -O2 -g"
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Run Tests
+      run: ctest --test-dir build --output-on-failure
+
+    - name: Memory Leak Check
+      run: valgrind --leak-check=full ./build/kv_store_test
+
+    - name: Cache Performance
+      run: valgrind --tool=cachegrind --cachegrind-out-file=/dev/null ./build/kv_store_test
