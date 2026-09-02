@@ -22,10 +22,7 @@
  */
 ssize_t proc_request(int connfd) {
   char rbuf[BUFFER_SIZE];
-  ssize_t retval = recv_full(connfd, rbuf, BUFFER_SIZE);
-  msg(EXIT_FAILURE, errno == 0 ? "EOF" : "Receive");
-  std::cout << retval << std::endl;
-  return 0;
+  // TODO: parse buffer data
 }
 
 int main() {
