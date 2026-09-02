@@ -19,6 +19,6 @@ add_library(kv_store_lib ${LIB_SOURCES})
 target_include_directories(kv_store_lib PUBLIC include)
 
 # Server executable
-add_executable(kv_store_server src/server.cc)
+add_executable(kv_store_server src/server/server.cc)
 target_link_libraries(kv_store_server kv_store_lib)
 
