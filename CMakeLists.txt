@@ -1,35 +1,38 @@
 cmake_minimum_required(VERSION 3.15)
 project(kv_store CXX)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include directories
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Compiler warnings
+add_compile_options(-Wall -Wextra -Werror)
 
-# Auto-discover source files (excluding executables)
-file(GLOB_RECURSE LIB_SOURCES "src/**/*.cc" "src/**/*.cpp")
+# Source discovery - get all .cc and .cpp files recursively
+file(GLOB_RECURSE ALL_SOURCES 
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cc"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp"
+)
 
-# Remove server executables from library
-list(FILTER LIB_SOURCES EXCLUDE REGEX "src/server/(server|client)\\.cc$")
+# Separate library sources from executables
+set(LIB_SOURCES ${ALL_SOURCES})
+list(FILTER LIB_SOURCES EXCLUDE REGEX "server\\.cc$|client\\.cc$")
 
-# Create library
+# Library (all utilities, parsers, etc.)
 add_library(kv_store_lib ${LIB_SOURCES})
 target_include_directories(kv_store_lib PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Server executable
 add_executable(kv_store_server src/server/server.cc)
 target_link_libraries(kv_store_server kv_store_lib)
 target_include_directories(kv_store_server PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Client executable
 add_executable(kv_store_client src/server/client.cc)
 target_link_libraries(kv_store_client kv_store_lib)
 target_include_directories(kv_store_client PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
