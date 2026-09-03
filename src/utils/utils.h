@@ -33,7 +33,7 @@ inline void msg(int exit_code, const char* message) {
  */
 inline ssize_t recv_full(int sockfd, char *buf, size_t len) {
   // Total number of bytes read from socket
-  size_t total = 0;
+  // size_t total = 0;
   while (len > 0) {
     ssize_t retval = recv(sockfd, buf, len, 0);
     // Check if EOF or error
@@ -42,9 +42,10 @@ inline ssize_t recv_full(int sockfd, char *buf, size_t len) {
     len -= (size_t)retval;
     // Move buffer pointer to the next available slot
     buf += (size_t)retval;
-    total += (size_t)retval;
+    // total += (size_t)retval;
   }
-  return (ssize_t)total;
+  // return (ssize_t)total;
+  return 0;
 }
 
 /**
@@ -57,7 +58,7 @@ inline ssize_t recv_full(int sockfd, char *buf, size_t len) {
  */
 inline ssize_t send_full(int sockfd, char *buf, size_t len) {
   // Total number of bytes read from socket
-  size_t total = 0;
+  // size_t total = 0;
   while (len > 0) {
     ssize_t retval = send(sockfd, buf, len, 0);
     // Check if EOF or error
@@ -66,9 +67,10 @@ inline ssize_t send_full(int sockfd, char *buf, size_t len) {
     len -= (size_t)retval;
     // Move buffer pointer to the next available slot
     buf += (size_t)retval;
-    total += (size_t)retval;
+    // total += (size_t)retval;
   }
-  return (ssize_t)total;
+  // return (ssize_t)total;
+  return 0;
 }
 
 #endif // UTILS_H

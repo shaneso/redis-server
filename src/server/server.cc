@@ -21,8 +21,10 @@
  * @return exit code
  */
 ssize_t proc_request(int connfd) {
-  char rbuf[BUFFER_SIZE];
-  // TODO: parse buffer data
+  char rbuf[4 + BUFFER_SIZE];
+  errno = 0;
+  int32_t retval = recv_full(connfd, rbuf, 4);
+  if (retval)
 }
 
 int main() {
