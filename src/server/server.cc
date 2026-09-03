@@ -9,13 +9,13 @@
 #include <cstring>
 #include <iostream>
 // project
-#include "utils/utils.h"
+#include "src/utils/utils.h"
 
 // Socket max connections (/proc/sys/net)
 #define BACKLOG SOMAXCONN
 
 /**
- * @brief Processes buffer data I/O
+ * @brief Processes buffer message I/O
  * 
  * @param connfd is the connection-mode socket handle
  * @return exit code
@@ -24,7 +24,35 @@ ssize_t proc_request(int connfd) {
   char rbuf[4 + BUFFER_SIZE];
   errno = 0;
   int32_t retval = recv_full(connfd, rbuf, 4);
-  if (retval)
+  // Check if EOF or receive error
+  if (retval) {
+    msg(EXIT_FAILURE, errno == 0 ? "EOF" : "Receive");
+    return retval;
+  }
+  uint32_t len = 0;
+  // Copy message size to buffer
+  memcpy(&len, rbuf, 4);
+  // Check for message size overflow
+  if (len > BUFFER_SIZE) {
+    msg(EXIT_FAILURE, "Overflow");
+    return -1;
+  }
+  retval = recv_full(connfd, &rbuf[4], len);
+  if (retval) {
+    msg(EXIT_FAILURE, "Receive");
+    return retval;
+  }
+  std::cout << "Client: " << &rbuf[4] << std::endl;
+  // Placeholder response
+  const char response[] = "world";
+  // Write buffer message
+  char wbuf[4 + sizeof(response)];
+  // Extract response length
+  len = (uint32_t)std::strlen(response);
+  // Copy payload size and message to buffer
+  memcpy(wbuf, &len, 4);
+  memcpy(&wbuf[4], response, len);
+  return send_full(connfd, wbuf, 4 + len);
 }
 
 int main() {
