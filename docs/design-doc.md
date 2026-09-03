@@ -8,7 +8,9 @@
 
 ## Proposed Features
 
-- RDB persistence for permanent data and kv storage
+- RDB + AOF persistence for permanent data and kv storage
+  - Save state snapshots with RDB
+  - Reconstruct latest state from recent write actions with AOF
 - `epoll` API and event-based concurrency
 
 ## Architecture
