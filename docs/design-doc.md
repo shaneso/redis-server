@@ -195,3 +195,7 @@ parse_integer():
   return exit code
 ```
 
+### Non-Blocking I/O Mode
+
+To set a socket handle (file descriptor) to non-blocking mode for event-driven concurrency, the `fcntl` syscall may be used. Man page documentation can be accessed using `man 2 fcntl`, which describes all available operations. Socket handle flags, such as the `O_NONBLOCK` flag, are listed in the `man 2 open` manual. The `O_NONBLOCK` flag is used to modify a file descriptor's behavior to non-blocking.
+
