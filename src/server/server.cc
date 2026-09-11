@@ -102,21 +102,23 @@ int main() {
   // Check if socket is established as passive
   if (retval == -1)
     msg(EXIT_FAILURE, "Listen");
-  
-  // Initialize client socket endpoint scheme
-  struct sockaddr_in client_addr = {};
 
   // Accept and handle client connections
   while (1) {
+    // Initialize client socket endpoint scheme
+    struct sockaddr_in client_addr = {};
     // Initialize client endpoint address length (IP protocol-agnostic)
     addrlen_c = sizeof(client_addr);
     // Accept client connection request and return socket handle
     // addrlen_c passed to accept syscall as pointer
     connfd = accept(sockfd, (struct sockaddr*) &client_addr, &addrlen_c);
     // Check if client connection request has been accepted
-    if (connfd == -1)
-      msg(EXIT_FAILURE, "Accept");
-    proc_request(connfd);
+    if (connfd < 0) continue;
+    // msg(EXIT_FAILURE, "Accept");
+    while (1) {
+      ssize_t retval = proc_request(connfd);
+      if (retval) break;
+    }
     close(connfd);
   }
 

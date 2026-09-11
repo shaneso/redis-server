@@ -199,3 +199,29 @@ parse_integer():
 
 To set a socket handle (file descriptor) to non-blocking mode for event-driven concurrency, the `fcntl` syscall may be used. Man page documentation can be accessed using `man 2 fcntl`, which describes all available operations. Socket handle flags, such as the `O_NONBLOCK` flag, are listed in the `man 2 open` manual. The `O_NONBLOCK` flag is used to modify a file descriptor's behavior to non-blocking.
 
+### I/O Event Notification
+
+To achieve event-driven concurrency, the framework used for this program will use `poll` or `epoll` (Linux-specific) to monitor multiple socket handle file descriptors at the same time. The `select` syscall will not be used because it can only handle 1024 file descriptors, which is a low limit for most modern applications. To use `epoll` the `epoll_ctl` control interface is implemented, which is used to add, modify, or remove file descriptors from the relevant list.
+
+### Server Event Loop Algorithm
+
+```
+while true:
+  // Sets of socket file descriptors
+  request_read = [...]
+  request_send = [...]
+  // Ready status flags
+  can_read, can_send = wait(request_read, request_send)
+  // Read process
+  for fd in can_read:
+    data = read_nb(fd)
+    proc_data(fd, data)
+  endfor
+  // Write process
+  for fd in can_send:
+    data = pending_data(fd)
+    len = send_nb(fd, data)
+    data_sent(fd, len)
+  endfor
+endwhile
+```
