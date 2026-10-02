@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 // system
 #include <arpa/inet.h>
 #include <netinet/in.h>

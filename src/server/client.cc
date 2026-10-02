@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 // system
 #include <netinet/in.h>
 #include <sys/socket.h>
